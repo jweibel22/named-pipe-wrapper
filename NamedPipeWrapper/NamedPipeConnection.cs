@@ -142,14 +142,21 @@ namespace NamedPipeWrapper
         {
             while (IsConnected && _streamWrapper.CanRead)
             {
-                var obj = _streamWrapper.ReadObject();
-                if (obj == null)
+                try
                 {
-                    CloseImpl();
-                    return;
+                    var obj = _streamWrapper.ReadObject();
+                    if (obj == null)
+                    {
+                        CloseImpl();
+                        return;
+                    }
+                    if (ReceiveMessage != null)
+                        ReceiveMessage(this, obj);
                 }
-                if (ReceiveMessage != null)
-                    ReceiveMessage(this, obj);
+                catch (Exception ex)
+                {
+                    OnError(ex);
+                }
             }
         }
 
@@ -164,8 +171,15 @@ namespace NamedPipeWrapper
                 _writeSignal.WaitOne();
                 while (_writeQueue.Count > 0)
                 {
-                    _streamWrapper.WriteObject(_writeQueue.Dequeue());
-                    _streamWrapper.WaitForPipeDrain();
+                    try
+                    {
+                        _streamWrapper.WriteObject(_writeQueue.Dequeue());
+                        _streamWrapper.WaitForPipeDrain();
+                    }
+                    catch (Exception ex)
+                    {                        
+                        OnError(ex);
+                    }
                 }
             }
         }
