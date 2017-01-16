@@ -88,8 +88,19 @@ namespace NamedPipeWrapper
         /// <param name="message"></param>
         public void PushMessage(TWrite message)
         {
-            _writeQueue.Enqueue(message);
-            _writeSignal.Set();
+            try
+            {
+                if (message == null)
+                {
+                    throw new ArgumentNullException("message");
+                }
+                _writeQueue.Enqueue(message);
+                _writeSignal.Set();
+            }
+            catch (Exception ex)
+            {
+                OnError(ex);
+            }
         }
 
         /// <summary>

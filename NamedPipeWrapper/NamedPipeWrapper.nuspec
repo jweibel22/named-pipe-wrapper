@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>DC.NamedPipeWrapper</id>
-    <version>0.2.0.0</version>
+    <version>0.2.2.0</version>
     <title>DC.NamedPipeWrapper</title>
     <authors>Jimmy Weibel Rasmussen, Jørgen Bøndergaard Iversen
     </authors>
